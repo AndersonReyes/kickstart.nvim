@@ -44,6 +44,10 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+local function metals_status()
+  return vim.g['metals_status']
+end
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -70,8 +74,8 @@ require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
 
   -- Git related plugins
-  'tpope/vim-fugitive',
-  'tpope/vim-rhubarb',
+  -- 'tpope/vim-fugitive',
+  -- 'tpope/vim-rhubarb',
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
@@ -113,51 +117,51 @@ require('lazy').setup({
 
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
-  {
-    -- Adds git related signs to the gutter, as well as utilities for managing changes
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      -- See `:help gitsigns.txt`
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-      on_attach = function(bufnr)
-        vim.keymap.set('n', '<leader>hp', require('gitsigns').preview_hunk, { buffer = bufnr, desc = 'Preview git hunk' })
+  --{
+  --  -- Adds git related signs to the gutter, as well as utilities for managing changes
+  --   -- 'lewis6991/gitsigns.nvim',
+  --  opts = {
+  --    -- See `:help gitsigns.txt`
+  --    signs = {
+  --      add = { text = '+' },
+  --      change = { text = '~' },
+  --      delete = { text = '_' },
+  --      topdelete = { text = '‾' },
+  --      changedelete = { text = '~' },
+  --    },
+  --    on_attach = function(bufnr)
+  --      vim.keymap.set('n', '<leader>hp', require('gitsigns').preview_hunk, { buffer = bufnr, desc = 'Preview git hunk' })
 
-        -- don't override the built-in and fugitive keymaps
-        local gs = package.loaded.gitsigns
-        vim.keymap.set({ 'n', 'v' }, ']c', function()
-          if vim.wo.diff then
-            return ']c'
-          end
-          vim.schedule(function()
-            gs.next_hunk()
-          end)
-          return '<Ignore>'
-        end, { expr = true, buffer = bufnr, desc = 'Jump to next hunk' })
-        vim.keymap.set({ 'n', 'v' }, '[c', function()
-          if vim.wo.diff then
-            return '[c'
-          end
-          vim.schedule(function()
-            gs.prev_hunk()
-          end)
-          return '<Ignore>'
-        end, { expr = true, buffer = bufnr, desc = 'Jump to previous hunk' })
-      end,
-    },
-  },
+  --      -- don't override the built-in and fugitive keymaps
+  --      local gs = package.loaded.gitsigns
+  --      vim.keymap.set({ 'n', 'v' }, ']c', function()
+  --        if vim.wo.diff then
+  --          return ']c'
+  --        end
+  --        vim.schedule(function()
+  --          gs.next_hunk()
+  --        end)
+  --        return '<Ignore>'
+  --      end, { expr = true, buffer = bufnr, desc = 'Jump to next hunk' })
+  --      vim.keymap.set({ 'n', 'v' }, '[c', function()
+  --        if vim.wo.diff then
+  --          return '[c'
+  --        end
+  --        vim.schedule(function()
+  --          gs.prev_hunk()
+  --        end)
+  --        return '<Ignore>'
+  --      end, { expr = true, buffer = bufnr, desc = 'Jump to previous hunk' })
+  --    end,
+  --  },
+  --},
 
   {
     -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
+    'nordtheme/vim',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'onedark'
+      vim.cmd.colorscheme 'nord'
     end,
   },
 
@@ -166,9 +170,24 @@ require('lazy').setup({
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
     opts = {
+      sections = {
+        lualine_a = {'mode'},
+        lualine_b = {'branch', 'diagnostics'},
+        lualine_c = {'filename'},
+        lualine_x = {metals_status, 'encoding', 'fileformat', 'filetype'},
+        lualine_z = {'location'}
+      },
+      inactive_sections = {
+        lualine_a = {},
+        lualine_b = {},
+        lualine_c = {'filename'},
+        lualine_x = {'location'},
+        lualine_y = {},
+        lualine_z = {}
+      },
       options = {
         icons_enabled = false,
-        theme = 'onedark',
+        theme = 'nord',
         component_separators = '|',
         section_separators = '',
       },
@@ -229,7 +248,7 @@ require('lazy').setup({
   --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' }
 }, {})
 
 -- [[ Setting options ]]
@@ -240,7 +259,7 @@ require('lazy').setup({
 vim.o.hlsearch = false
 
 -- Make line numbers default
-vim.wo.number = true
+vim.wo.number = false
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -261,7 +280,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Keep signcolumn on by default
-vim.wo.signcolumn = 'yes'
+vim.wo.signcolumn = 'auto'
 
 -- Decrease update time
 vim.o.updatetime = 250
@@ -278,6 +297,7 @@ vim.o.termguicolors = true
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
+vim.keymap.set("i", "jk", "<Esc>", { noremap = true} )
 
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -378,7 +398,7 @@ vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash' },
+    ensure_installed = { 'lua', 'python', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash', 'java', 'scala' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -513,10 +533,12 @@ require('mason-lspconfig').setup()
 local servers = {
   -- clangd = {},
   -- gopls = {},
-  -- pyright = {},
+  pyright = {},
+  jdtls = {},
+
   -- rust_analyzer = {},
-  -- tsserver = {},
-  -- html = { filetypes = { 'html', 'twig', 'hbs'} },
+  tsserver = {},
+  html = { filetypes = { 'html', 'twig', 'hbs'} },
 
   lua_ls = {
     Lua = {
@@ -606,3 +628,4 @@ cmp.setup {
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
