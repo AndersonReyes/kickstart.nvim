@@ -44,10 +44,6 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-local function metals_status()
-  return vim.g['metals_status']
-end
-
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -175,14 +171,14 @@ require('lazy').setup({
       sections = {
         lualine_a = {'mode'},
         lualine_b = {'branch', 'diagnostics'},
-        lualine_c = {{'filename', path = 2}},
-        lualine_x = {metals_status, 'encoding', 'fileformat', 'filetype'},
+        lualine_c = {'filename'},
+        lualine_x = {'encoding', 'fileformat', 'filetype'},
         lualine_z = {'location'}
       },
       inactive_sections = {
         lualine_a = {},
         lualine_b = {},
-        lualine_c = {{'filename', path = 2}},
+        lualine_c = {'filename'},
         lualine_x = {'location'},
         lualine_y = {},
         lualine_z = {}
@@ -300,6 +296,8 @@ vim.o.termguicolors = true
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set("i", "jk", "<Esc>", { noremap = true} )
+vim.keymap.set("n", "<C-s>", "<cmd>:w<CR>", { noremap = true} )
+
 
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -310,10 +308,6 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous dia
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
-
--- [[ Write buffers on insert exist ]]
-vim.api.nvim_create_autocmd('InsertLeave', {pattern = '*', command = "update"})
-vim.api.nvim_create_autocmd('TextChanged', {pattern = '*', command = "if &readonly==0 && filereadable(bufname('%')) | update | endif"})
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -496,12 +490,47 @@ local on_attach = function(_, bufnr)
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
+  nmap("n", "<leader>cl", vim.lsp.codelens.run)
+  nmap("n", "<leader>sh", vim.lsp.buf.signature_help)
+  nmap("n", "<leader>f", vim.lsp.buf.format)
+
+  -- Example mappings for usage with nvim-dap. If you don't use that, you can
+  -- skip these
+  nmap("n", "<leader>dc", function()
+    require("dap").continue()
+  end)
+
+  nmap("n", "<leader>dr", function()
+    require("dap").repl.toggle()
+  end)
+
+  nmap("n", "<leader>dK", function()
+    require("dap.ui.widgets").hover()
+  end)
+
+  nmap("n", "<leader>dt", function()
+    require("dap").toggle_breakpoint()
+  end)
+
+  nmap("n", "<leader>dso", function()
+    require("dap").step_over()
+  end)
+
+  nmap("n", "<leader>dsi", function()
+    require("dap").step_into()
+  end)
+
+  nmap("n", "<leader>dl", function()
+    require("dap").run_last()
+  end)
   nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
   nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+  nmap('<leader>mc', require("telescope").extensions.metals.commands, 'Metals Commands')
+    
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
@@ -530,6 +559,7 @@ require('which-key').register {
   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+  ['<leader>m'] = { name = '[M]etals', _ = 'which_key_ignore' },
 }
 
 -- mason-lspconfig requires that these setup functions are called in this order
