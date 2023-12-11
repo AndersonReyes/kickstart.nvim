@@ -327,9 +327,18 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- [[ Configure Telescope ]]
+local vimgrep_arguments = { unpack(require("telescope.config").values.vimgrep_arguments) }
 -- See `:help telescope` and `:help telescope.setup()`
+-- -- I want to search in hidden/dot files.
+table.insert(vimgrep_arguments, "--hidden")
+-- I don't want to search in the `.git` directory.
+table.insert(vimgrep_arguments, "--glob")
+table.insert(vimgrep_arguments, "!**/.git/*")
+table.insert(vimgrep_arguments, "!**/*.class")
+table.insert(vimgrep_arguments, "!**/*.pyc")
 require('telescope').setup {
   defaults = {
+    vimgrep_arguments = vimgrep_arguments,
     mappings = {
       i = {
         ['<C-u>'] = false,
