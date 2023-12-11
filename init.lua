@@ -25,7 +25,7 @@ Kickstart.nvim is a template for your own configuration.
 Kickstart Guide:
 
 I have left several `:help X` comments throughout the init.lua
-You should run that command and read that help section for more information.
+Yu should run that command and read that help section for more information.
 
 In addition, I have some `NOTE:` items throughout the file.
 These are for you, the reader to help understand what is happening. Feel free to delete
@@ -103,6 +103,8 @@ require('lazy').setup({
     -- Autocompletion
     'hrsh7th/nvim-cmp',
     dependencies = {
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
       -- Snippet Engine & its associated nvim-cmp source
       'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
@@ -173,14 +175,14 @@ require('lazy').setup({
       sections = {
         lualine_a = {'mode'},
         lualine_b = {'branch', 'diagnostics'},
-        lualine_c = {'filename'},
+        lualine_c = {{'filename', path = 2}},
         lualine_x = {metals_status, 'encoding', 'fileformat', 'filetype'},
         lualine_z = {'location'}
       },
       inactive_sections = {
         lualine_a = {},
         lualine_b = {},
-        lualine_c = {'filename'},
+        lualine_c = {{'filename', path = 2}},
         lualine_x = {'location'},
         lualine_y = {},
         lualine_z = {}
@@ -398,7 +400,7 @@ vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'lua', 'python', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash', 'java', 'scala' },
+    ensure_installed = { 'lua', 'python', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash', 'ocaml'},
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -535,6 +537,7 @@ local servers = {
   -- gopls = {},
   pyright = {},
   jdtls = {},
+  ocamllsp = {},
 
   -- rust_analyzer = {},
   tsserver = {},
@@ -623,6 +626,8 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'buffer' },
+    { name = 'path' }
   },
 }
 
