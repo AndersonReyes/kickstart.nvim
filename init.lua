@@ -114,7 +114,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',  opts = {} },
   --{
   --  -- Adds git related signs to the gutter, as well as utilities for managing changes
   --   -- 'lewis6991/gitsigns.nvim',
@@ -153,13 +153,11 @@ require('lazy').setup({
   --    end,
   --  },
   --},
-
   {
-    -- Theme inspired by Atom
-    'nordtheme/vim',
+    'rose-pine/neovim',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'nord'
+      vim.cmd.colorscheme 'rose-pine'
     end,
   },
 
@@ -169,23 +167,23 @@ require('lazy').setup({
     -- See `:help lualine.txt`
     opts = {
       sections = {
-        lualine_a = {'mode'},
-        lualine_b = {'branch', 'diagnostics'},
-        lualine_c = {'filename'},
-        lualine_x = {'encoding', 'fileformat', 'filetype'},
-        lualine_z = {'location'}
+        lualine_a = { 'mode' },
+        lualine_b = { 'branch', 'diagnostics' },
+        lualine_c = { { 'filename', path = 1 } },
+        lualine_x = { 'encoding', 'fileformat', 'filetype' },
+        lualine_z = { 'location' }
       },
       inactive_sections = {
         lualine_a = {},
         lualine_b = {},
-        lualine_c = {'filename'},
-        lualine_x = {'location'},
+        lualine_c = { { 'filename', path = 1 } },
+        lualine_x = { 'location' },
         lualine_y = {},
         lualine_z = {}
       },
       options = {
         icons_enabled = false,
-        theme = 'nord',
+        theme = 'auto',
         component_separators = '|',
         section_separators = '',
       },
@@ -237,7 +235,7 @@ require('lazy').setup({
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
-  -- require 'kickstart.plugins.autoformat',
+  require 'kickstart.plugins.autoformat',
   -- require 'kickstart.plugins.debug',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -252,12 +250,21 @@ require('lazy').setup({
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
+vim.g.colors_off_a_little = 1
+
+vim.g.netrw_winsize = 30
+vim.g.netrw_banner = 0
+
+vim.o.tabstop = 2
+vim.o.shiftwidth = 2
+vim.o.softtabstop = 2
 
 -- Set highlight on search
 vim.o.hlsearch = false
 
 -- Make line numbers default
-vim.wo.number = false
+vim.wo.number = true
+vim.wo.relativenumber = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -285,6 +292,7 @@ vim.o.updatetime = 250
 vim.o.timeoutlen = 300
 
 -- Set completeopt to have a better completion experience
+vim.o.complete = '.,w,b'
 vim.o.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
@@ -295,9 +303,14 @@ vim.o.termguicolors = true
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-vim.keymap.set("i", "jk", "<Esc>", { noremap = true} )
-vim.keymap.set("n", "<C-s>", "<cmd>:w<CR>", { noremap = true} )
+vim.keymap.set("i", "jk", "<Esc>", { noremap = true })
+vim.keymap.set("n", "<C-s>", "<cmd>:w<CR>", { noremap = true })
 
+-- window moving
+vim.keymap.set('n', '<C-J>', '<C-W><C-J>', { noremap = true })
+vim.keymap.set('n', '<C-L>', '<C-W><C-L>', { noremap = true })
+vim.keymap.set('n', '<C-H>', '<C-W><C-H>', { noremap = true })
+vim.keymap.set('n', '<C-K>', '<C-W><C-K>', { noremap = true })
 
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -374,7 +387,7 @@ local function live_grep_git_root()
   local git_root = find_git_root()
   if git_root then
     require('telescope.builtin').live_grep({
-      search_dirs = {git_root},
+      search_dirs = { git_root },
     })
   end
 end
@@ -382,6 +395,7 @@ end
 vim.api.nvim_create_user_command('LiveGrepGitRoot', live_grep_git_root, {})
 
 -- See `:help telescope.builtin`
+--
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
@@ -407,7 +421,7 @@ vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'lua', 'c', 'cpp', 'python', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash', 'ocaml'},
+    ensure_installed = { 'lua', 'c', 'cpp', 'python', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash', 'ocaml', 'rust', 'scala', 'html' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -529,7 +543,7 @@ local on_attach = function(_, bufnr)
   nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-    
+
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
@@ -575,22 +589,17 @@ require('mason-lspconfig').setup()
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  clangd = {},
-  -- gopls = {},
-  pyright = {},
-  jdtls = {},
-  ocamllsp = {},
-
   rust_analyzer = {},
+  eslint = {},
   tsserver = {},
-  html = { filetypes = { 'html', 'twig', 'hbs'} },
+  html = { filetypes = { 'html' } },
 
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
       -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-      -- diagnostics = { disable = { 'missing-fields' } },
+      diagnostics = { disable = { 'missing-fields' } },
     },
   },
 }
@@ -668,7 +677,13 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
-    { name = 'buffer' },
+    { name = 'buffer',
+      option = {
+        get_bufnrs = function()
+          return vim.api.nvim_list_bufs()
+        end
+      }
+    },
     { name = 'path' }
   },
 }
@@ -676,4 +691,3 @@ cmp.setup {
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 -- cpp: ts=2 sts=2 sw=2 et
-
