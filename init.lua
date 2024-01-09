@@ -154,10 +154,10 @@ require('lazy').setup({
   --  },
   --},
   {
-    'rose-pine/neovim',
+    'EdenEast/nightfox.nvim',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'rose-pine'
+      vim.cmd.colorscheme 'terafox'
     end,
   },
 
@@ -250,7 +250,6 @@ require('lazy').setup({
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
-vim.g.colors_off_a_little = 1
 
 vim.g.netrw_winsize = 30
 vim.g.netrw_banner = 0
