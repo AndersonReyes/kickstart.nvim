@@ -158,11 +158,10 @@ require('lazy').setup({
   --  },
   --},
   {
-    --'EdenEast/nightfox.nvim',
-    'doums/darcula',
+    'alligator/accent.vim',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'darcula'
+      vim.cmd.colorscheme 'accent'
     end,
   },
 
@@ -598,6 +597,7 @@ require('mason-lspconfig').setup()
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
+  clangd = {},
   pylsp = {
     pylsp = {
       plugins = {
