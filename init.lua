@@ -158,41 +158,13 @@ require('lazy').setup({
   --  },
   --},
   {
-    'alligator/accent.vim',
+    'morhetz/gruvbox',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'accent'
+      vim.cmd.colorscheme 'gruvbox'
     end,
   },
 
-  {
-    -- Set lualine as statusline
-    'nvim-lualine/lualine.nvim',
-    -- See `:help lualine.txt`
-    opts = {
-      sections = {
-        lualine_a = { 'mode' },
-        lualine_b = { 'branch', 'diagnostics' },
-        lualine_c = { { 'filename', path = 1 } },
-        lualine_x = { 'encoding', 'fileformat', 'filetype' },
-        lualine_z = { 'location' }
-      },
-      inactive_sections = {
-        lualine_a = {},
-        lualine_b = {},
-        lualine_c = { { 'filename', path = 1 } },
-        lualine_x = { 'location' },
-        lualine_y = {},
-        lualine_z = {}
-      },
-      options = {
-        icons_enabled = false,
-        theme = 'auto',
-        component_separators = '|',
-        section_separators = '',
-      },
-    },
-  },
 
   {
     -- Add indentation guides even on blank lines
@@ -429,7 +401,7 @@ vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'lua', 'c', 'cpp', 'python', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash', 'ocaml', 'rust', 'scala', 'html' },
+    ensure_installed = { 'lua', 'c', 'cpp', 'vimdoc', 'vim', 'bash' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -572,15 +544,17 @@ local on_attach = function(_, bufnr)
 end
 
 -- document existing key chains
-require('which-key').register {
-  ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-  ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-  ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
-  ['<leader>h'] = { name = 'More git', _ = 'which_key_ignore' },
-  ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-  ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-  ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
-  ['<leader>m'] = { name = '[M]etals', _ = 'which_key_ignore' },
+require('which-key').add {
+  { '<leader>c',  desc = '[C]ode' },
+  { '<leader>c_', hidden = true },
+  { '<leader>d',  desc = '[D]ocument' },
+  { '<leader>d_', hidden = true },
+  { '<leader>r',  desc = '[R]ename' },
+  { '<leader>r_', hidden = true },
+  { '<leader>s',  desc = '[S]earch' },
+  { '<leader>s_', hidden = true },
+  { '<leader>w',  desc = '[W]orkspace' },
+  { '<leader>w_', hidden = true },
 }
 
 -- mason-lspconfig requires that these setup functions are called in this order
@@ -598,29 +572,6 @@ require('mason-lspconfig').setup()
 --  define the property 'filetypes' to the map in question.
 local servers = {
   clangd = {},
-  pylsp = {
-    pylsp = {
-      plugins = {
-        flake8      = {
-          enabled = true,
-          maxLineLength = 100,
-        },
-        autopep8    = { enabled = false },
-        pycodestyle = { enabled = false },
-        mccabe      = { enabled = false },
-        pylsp_mypy  = { enabled = false },
-        pyflakes    = { enabled = false },
-        pylint      = { enabled = false },
-        ruff        = { enabled = false },
-        yapf        = { enabled = false }
-      }
-    }
-  },
-  rust_analyzer = {},
-  eslint = {},
-  tsserver = {},
-  html = { filetypes = { 'html' } },
-
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -697,7 +648,9 @@ require("oil").setup({
   cleanup_delay_ms = 2000,
   -- Set to true to autosave buffers that are updated with LSP willRenameFiles
   -- Set to "unmodified" to only save unmodified buffers
-  lsp_rename_autosave = false,
+  lsp_file_methods = {
+    autosave_changes = false
+  },
   -- Constrain the cursor to the editable parts of the oil buffer
   -- Set to `false` to disable, or "name" to keep it on the file names
   constrain_cursor = "editable",
