@@ -633,10 +633,11 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        clangd = {},
+        -- zig lang
+        zls = {},
+        -- clangd = {},
         -- gopls = {},
         -- pyright = {},
-        pylsp = {},
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -647,20 +648,20 @@ require('lazy').setup({
         -- tsserver = {},
         --
 
-        lua_ls = {
-          -- cmd = {...},
-          -- filetypes = { ...},
-          -- capabilities = {},
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace',
-              },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
-            },
-          },
-        },
+        --lua_ls = {
+        --  -- cmd = {...},
+        --  -- filetypes = { ...},
+        --  -- capabilities = {},
+        --  settings = {
+        --    Lua = {
+        --      completion = {
+        --        callSnippet = 'Replace',
+        --      },
+        --      -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+        --      -- diagnostics = { disable = { 'missing-fields' } },
+        --    },
+        --  },
+        --},
       }
 
       -- Ensure the servers and tools above are installed
@@ -714,7 +715,7 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = false, cpp = false }
+        local disable_filetypes = { c = false, cpp = false, js = true, ts = true, jsx = true, typescriptreact = true }
         return {
           timeout_ms = 500,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
@@ -910,7 +911,25 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'cpp', 'scala' },
+      ensure_installed = {
+        'zig',
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'cpp',
+        'scala',
+        'javascript',
+        'typescript',
+        'css',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
