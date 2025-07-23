@@ -272,21 +272,21 @@ require('lazy').setup({
     },
   },
 
-  {
-    'stevearc/oil.nvim',
-    opts = {},
-    -- Optional dependencies
-    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
-    config = function()
-      require('oil').setup {
+  --{
+  --  'stevearc/oil.nvim',
+  --  opts = {},
+  --  -- Optional dependencies
+  --  dependencies = { { 'echasnovski/mini.icons', opts = {} } },
+  --  config = function()
+  --    require('oil').setup {
 
-        default_file_explorer = true,
-      }
+  --      default_file_explorer = true,
+  --    }
 
-      vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
-    end,
-    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
-  },
+  --    vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+  --  end,
+  --  -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
+  --},
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -634,11 +634,11 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- zig lang
-        zls = {},
+        -- zls = {},
         -- clangd = {},
-        -- gopls = {},
+        gopls = {},
         -- pyright = {},
-        rust_analyzer = {},
+        -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -915,6 +915,7 @@ require('lazy').setup({
         'zig',
         'bash',
         'c',
+        'go',
         'diff',
         'html',
         'lua',
